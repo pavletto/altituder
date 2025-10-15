@@ -1,0 +1,4 @@
+### jabal hafit peak coordinates 24.057885213585514, 55.7808648387363 height in utm 1088
+GET http://localhost:8080/height?lat=24.0578852&lon=55.7808648
+
+###

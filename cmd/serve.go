@@ -61,6 +61,7 @@ var serveCmd = &cobra.Command{
 		s := &ddm.Server{Store: store}
 
 		mux := http.NewServeMux()
+		mux.HandleFunc("/intersection", s.HandleIntersection)
 		mux.HandleFunc("/height", s.HandleHeight)
 		mux.HandleFunc("/health", s.HandleHealth)
 
