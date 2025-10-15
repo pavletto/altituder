@@ -1,0 +1,13 @@
+name: altituder
+services:
+  altituder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    security_opt:
+      - seccomp:unconfined
+    ports:
+      - "8080:8080"
+      - "2345:2345"
+    volumes:
+      - ./:/app
