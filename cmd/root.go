@@ -11,17 +11,15 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "go-reload-debug",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Use:   "altituder",
+	Short: "Terrain elevation and raycast intersection service",
+	Long: `Altituder is a Go-based terrain elevation and raycast intersection service.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+It provides both CLI commands and HTTP API endpoints for:
+- Height Lookup: Get terrain elevation at any geographic coordinate
+- Intersection Search: Perform raycast to find terrain intersections
+
+Configuration can be set via environment variables or command-line flags.`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -35,13 +33,12 @@ func Execute() {
 }
 
 func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.go-reload-debug.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// Global flags
+	rootCmd.PersistentFlags().StringP("cache-dir", "c", "./cache", "Cache directory for DEM tiles")
+	rootCmd.PersistentFlags().String("url-template", "https://{s}.geodata.microavia.com/srtm/{z}/{y}/{x}.ddm", "URL template for downloading tiles")
+	rootCmd.PersistentFlags().String("subdomains", "a,b,c", "Comma-separated list of subdomains")
+	rootCmd.PersistentFlags().IntP("zoom", "z", 14, "Default zoom level")
+	rootCmd.PersistentFlags().Int("max-native-zoom", 14, "Maximum native zoom level")
+	rootCmd.PersistentFlags().Float64("height-factor", 1.0, "Height multiplication factor")
+	rootCmd.PersistentFlags().String("nodata-values", "", "Comma-separated list of no-data values (e.g., '-32768,3.4028235e+38')")
 }

@@ -7,7 +7,7 @@ This document describes the architectural refactoring performed to make the alti
 
 ### 1. Extracted Reusable Business Logic Functions
 
-Created two new business logic functions in `cmd/ddm/service.go`:
+Created two new business logic functions in `cmd/ddm/elevation.go`:
 
 #### `SearchIntersection` Function
 - **Purpose**: Performs terrain raycast to find intersection points
@@ -23,7 +23,7 @@ Created two new business logic functions in `cmd/ddm/service.go`:
 
 ### 2. Refactored HTTP Handlers
 
-Updated `cmd/ddm/main.go` to separate concerns:
+Updated `cmd/ddm/handlers.go` to separate concerns:
 
 #### `HandleIntersection`
 - **Before**: Had hardcoded test values, missing proper HTTP request parameter
@@ -54,7 +54,49 @@ Updated `cmd/ddm/main.go` to separate concerns:
 4. **Maintainability**: Changes to business logic don't affect HTTP handling and vice versa
 5. **Type Safety**: Explicit request/response structs provide clear contracts
 
-## API Usage Examples
+## CLI Commands
+
+### Height Command
+
+```bash
+# Get elevation at a location
+altituder height --lat 25.0 --lon 55.0
+
+# With custom configuration
+altituder height --lat 25.0 --lon 55.0 --zoom 15 --cache-dir /tmp/cache
+```
+
+### Intersection Command
+
+```bash
+# Find terrain intersection via raycast
+altituder intersection \
+  --cam-lat 25.001 \
+  --cam-lon 55.729 \
+  --cam-alt 177.72 \
+  --quat 0.8581,0.0776,-0.1359,0.4899
+
+# With custom search parameters
+altituder intersection \
+  --cam-lat 25.001 \
+  --cam-lon 55.729 \
+  --cam-alt 177.72 \
+  --quat 1,0,0,0 \
+  --step 2 \
+  --max-dist 1000
+```
+
+### Serve Command
+
+```bash
+# Start HTTP API server
+altituder serve
+
+# With custom port and configuration
+altituder serve --addr :9000 --cache-dir /data/cache
+```
+
+## HTTP API Usage Examples
 
 ### Height Lookup Endpoint
 ```bash
