@@ -136,7 +136,7 @@ func Raycast(p RaycastParams) (lon, lat, ground float64, hit bool) {
 	ox, oy, oz := ToECEF(p.CamLon, p.CamLat, p.CamAlt)
 
 	// Направление взгляда в NED
-	dirNED := QuaternionToLookDirNED(p.Quat)
+	dirNED := QuaternionToLookDirNEDX(p.Quat)
 
 	// Вектор направления в ECEF
 	M := nedToECEFMatrix(p.CamLon, p.CamLat)
