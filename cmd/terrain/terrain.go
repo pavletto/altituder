@@ -46,36 +46,45 @@ func ECEFToLLA(x, y, z float64) (lonDeg, latDeg, h float64) {
 
 // QuaternionToLookDirNED преобразует кватернион ориентации (в NED) в вектор направления взгляда камеры в NED.
 // q: [w, x, y, z] — кватернион, может быть в фиксированной точке (например, PX4 att_q_ned_sp).
-func QuaternionToLookDirNED(q [4]float64) [3]float64 {
+func QuaternionToLookDirNEDX(q [4]float64) [3]float64 {
 	// нормализация
 	n := math.Sqrt(q[0]*q[0] + q[1]*q[1] + q[2]*q[2] + q[3]*q[3])
 	if n < 1e-9 {
-		return [3]float64{0, 0, 1}
+		return [3]float64{1, 0, 0}
 	}
 	w := q[0] / n
 	x := q[1] / n
 	y := q[2] / n
 	z := q[3] / n
 
-	// матрица поворота body→NED
-	R := [3][3]float64{
-		{1 - 2*(y*y+z*z), 2 * (x*y - z*w), 2 * (x*z + y*w)},
-		{2 * (x*y + z*w), 1 - 2*(x*x+z*z), 2 * (y*z - x*w)},
-		{2 * (x*z - y*w), 2 * (y*z + x*w), 1 - 2*(x*x+y*y)},
-	}
+	// локальный вектор (ось X)
+	vx, vy, vz := 1.0, 0.0, 0.0
 
-	// ось взгляда камеры: -Z body → [0,0,-1]
-	// Вектор взгляда в NED = R * (0,0,-1)
-	dirN := -R[0][2]
-	dirE := -R[1][2]
-	dirD := -R[2][2]
+	// q-векторная часть
+	qx, qy, qz := x, y, z
 
-	// нормализуем
-	l := math.Sqrt(dirN*dirN + dirE*dirE + dirD*dirD)
+	// cross(q_vec, v)
+	cx1 := qy*vz - qz*vy
+	cy1 := qz*vx - qx*vz
+	cz1 := qx*vy - qy*vx
+
+	// cross(q_vec, cross(q_vec, v) + w*v)
+	cx2 := qy*(cz1+w*vz) - qz*(cy1+w*vy)
+	cy2 := qz*(cx1+w*vx) - qx*(cz1+w*vz)
+	cz2 := qx*(cy1+w*vy) - qy*(cx1+w*vx)
+
+	// v' = v + 2 * cx2
+	vxp := vx + 2*cx2
+	vyp := vy + 2*cy2
+	vzp := vz + 2*cz2
+
+	// нормализация
+	l := math.Sqrt(vxp*vxp + vyp*vyp + vzp*vzp)
 	if l < 1e-9 {
-		return [3]float64{0, 0, 1}
+		return [3]float64{1, 0, 0}
 	}
-	return [3]float64{dirN / l, dirE / l, dirD / l}
+
+	return [3]float64{vxp / l, vyp / l, vzp / l}
 }
 
 // ---------------- NED → ECEF ----------------
