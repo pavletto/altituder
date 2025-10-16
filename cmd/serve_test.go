@@ -1,7 +1,7 @@
 package cmd_test
 
 import (
-	"altituder/cmd"
+	"github.com/pavletto/altituder/cmd"
 	"net/http"
 	"net/http/httptest"
 	"testing"

@@ -1,4 +1,4 @@
-module altituder
+module github.com/pavletto/altituder
 
 go 1.25
 

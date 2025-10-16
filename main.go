@@ -1,6 +1,6 @@
 package main
 
-import "altituder/cmd"
+import "github.com/pavletto/altituder/cmd"
 
 func main() {
 	cmd.Execute()

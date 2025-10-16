@@ -1,7 +1,6 @@
 package ddm
 
 import (
-	"altituder/cmd/terrain"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -11,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/pavletto/altituder/cmd/terrain"
 )
 
 type Server struct {

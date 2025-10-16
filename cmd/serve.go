@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"altituder/cmd/ddm"
 	"fmt"
+	"github.com/pavletto/altituder/cmd/ddm"
 	"log"
 	"net/http"
 	"os"
