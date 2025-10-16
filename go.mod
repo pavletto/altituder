@@ -2,7 +2,10 @@ module github.com/pavletto/altituder
 
 go 1.25
 
-require github.com/spf13/cobra v1.10.1
+require (
+	github.com/spf13/cobra v1.10.1
+	github.com/westphae/geomag v1.0.2
+)
 
 require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
