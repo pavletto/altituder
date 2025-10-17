@@ -130,3 +130,11 @@ func Raycast(p RaycastParams) (lon, lat, ground float64, hit bool) {
 
 	return curLon, curLat, curAlt, false
 }
+func MSLToEllipsoid(lat, lon, hMSL float64) (float64, float64, float64) {
+	loc, err := egm96.NewLocationMSL(lat, lon, hMSL)
+	if err != nil {
+		return lat, lon, hMSL
+	}
+	_, _, h := loc.Geodetic()
+	return lat, lon, h
+}
