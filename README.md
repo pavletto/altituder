@@ -25,12 +25,41 @@ These functions can be used in:
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed documentation and usage examples.
 
+## Project Structure
+
+Following the [Standard Go Project Layout](https://github.com/golang-standards/project-layout):
+
+```
+altituder/
+├── cmd/altituder/          # CLI application entry point
+│   ├── main.go            # Main entry
+│   ├── root.go            # Root command
+│   ├── height.go          # Height lookup command
+│   ├── intersection.go    # Intersection search command
+│   ├── serve.go           # HTTP server command
+│   └── config.go          # Configuration management
+├── internal/              # Private application packages
+│   ├── elevation/         # DEM/elevation operations
+│   │   ├── service.go     # Business logic (PickHeight, SearchIntersection)
+│   │   ├── store.go       # Tile store and caching
+│   │   ├── handlers.go    # HTTP handlers
+│   │   └── ...
+│   └── raycast/           # Raycast algorithms
+│       └── raycast.go     # Terrain intersection logic
+├── examples/              # Example code
+└── main.go               # Legacy entry (redirects to cmd/altituder)
+```
+
 ## Quick Start
 
 ### Build
 
 ```bash
-go build -o altituder .
+# Build the CLI application
+go build -o altituder ./cmd/altituder
+
+# Or use make
+make build
 ```
 
 ### CLI Commands

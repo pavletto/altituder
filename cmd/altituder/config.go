@@ -1,4 +1,4 @@
-package cmd
+package main
 
 import (
 	"os"
@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pavletto/altituder/cmd/ddm"
+	"github.com/pavletto/altituder/internal/elevation"
 	"github.com/spf13/cobra"
 )
 
@@ -39,8 +39,8 @@ func LoadConfig(cmd *cobra.Command) Config {
 }
 
 // CreateStore creates a new DDM store from the configuration
-func (c *Config) CreateStore() (*ddm.Store, error) {
-	cfg := ddm.StoreConfig{
+func (c *Config) CreateStore() (*elevation.Store, error) {
+	cfg := elevation.StoreConfig{
 		CacheDir:          c.CacheDir,
 		URLTemplate:       c.URLTemplate,
 		Subdomains:        c.Subdomains,
@@ -49,10 +49,10 @@ func (c *Config) CreateStore() (*ddm.Store, error) {
 		DefaultZoom:       c.DefaultZoom,
 		MaxNativeZoom:     c.MaxNativeZoom,
 		HeightFactor:      float32(c.HeightFactor),
-		NoDataValues:      ddm.ParseNoData(c.NoDataValues),
+		NoDataValues:      elevation.ParseNoData(c.NoDataValues),
 	}
 
-	return ddm.NewStore(cfg)
+	return elevation.NewStore(cfg)
 }
 
 // getConfigString gets a string value from flag, then env, then default

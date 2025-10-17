@@ -1,4 +1,4 @@
-package ddm
+package elevation
 
 import (
 	"context"

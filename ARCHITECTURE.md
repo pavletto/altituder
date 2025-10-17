@@ -1,13 +1,66 @@
 # Architectural Improvements - Code Review Summary
 
 ## Overview
-This document describes the architectural refactoring performed to make the altituder codebase more reusable and maintainable.
+This document describes the architectural refactoring performed to make the altituder codebase more reusable, maintainable, and follow Go best practices.
+
+## Project Structure
+
+The project now follows the [Standard Go Project Layout](https://github.com/golang-standards/project-layout):
+
+### Directory Structure
+
+```
+altituder/
+├── cmd/altituder/          # CLI application entry point (main package)
+│   ├── main.go            # Main entry point
+│   ├── root.go            # Root Cobra command
+│   ├── height.go          # Height lookup CLI command
+│   ├── intersection.go    # Intersection search CLI command
+│   ├── serve.go           # HTTP server CLI command
+│   └── config.go          # Configuration management
+│
+├── internal/              # Private application packages
+│   ├── elevation/         # DEM/elevation operations (formerly cmd/ddm/)
+│   │   ├── service.go     # Business logic (PickHeight, SearchIntersection)
+│   │   ├── service_test.go # Unit tests
+│   │   ├── store.go       # Tile store and caching
+│   │   ├── handlers.go    # HTTP handlers
+│   │   ├── tile.go        # Tile data structures
+│   │   ├── mercator.go    # Mercator projection utilities
+│   │   ├── adapter.go     # DEM adapter
+│   │   └── tilename.go    # Tile naming utilities
+│   │
+│   └── raycast/           # Raycast algorithms (formerly cmd/terrain/)
+│       └── raycast.go     # Terrain intersection and quaternion math
+│
+├── examples/              # Example code
+│   └── reusability_example.go
+│
+└── main.go               # Legacy entry (redirects to cmd/altituder)
+```
+
+### Package Reorganization
+
+| Old Location | New Location | Package Name | Purpose |
+|-------------|--------------|--------------|---------|
+| `cmd/ddm/` | `internal/elevation/` | `elevation` | DEM tile management and elevation services |
+| `cmd/terrain/` | `internal/raycast/` | `raycast` | Raycast algorithms and quaternion math |
+| `cmd/*.go` | `cmd/altituder/` | `main` | CLI entry point and commands |
+
+### Why This Structure?
+
+✅ **Follows Go Standards**: Adheres to golang-standards/project-layout
+✅ **Clear Separation**: CLI code separate from business logic
+✅ **Encapsulation**: `internal/` packages prevent external imports
+✅ **Discoverability**: Package names clearly describe their purpose
+✅ **No Stutter**: Avoid `ddm.DDMStore`, instead `elevation.Store`
+✅ **Maintainability**: Easier to navigate and understand
 
 ## Changes Made
 
 ### 1. Extracted Reusable Business Logic Functions
 
-Created two new business logic functions in `cmd/ddm/elevation.go`:
+Created two new business logic functions in `internal/elevation/service.go`:
 
 #### `SearchIntersection` Function
 - **Purpose**: Performs terrain raycast to find intersection points
@@ -23,7 +76,7 @@ Created two new business logic functions in `cmd/ddm/elevation.go`:
 
 ### 2. Refactored HTTP Handlers
 
-Updated `cmd/ddm/handlers.go` to separate concerns:
+Updated `internal/elevation/handlers.go` to separate concerns:
 
 #### `HandleIntersection`
 - **Before**: Had hardcoded test values, missing proper HTTP request parameter

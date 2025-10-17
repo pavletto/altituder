@@ -1,4 +1,4 @@
-package cmd
+package main
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/pavletto/altituder/cmd/ddm"
+	"github.com/pavletto/altituder/internal/elevation"
 	"github.com/spf13/cobra"
 )
 
@@ -51,7 +51,7 @@ The command will output the elevation in meters along with tile information.`,
 		}
 
 		// Build request
-		req := ddm.HeightRequest{
+		req := elevation.HeightRequest{
 			Lat:  lat,
 			Lon:  lon,
 			Zoom: zoom,
@@ -61,7 +61,7 @@ The command will output the elevation in meters along with tile information.`,
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cancel()
 
-		result, err := ddm.PickHeight(ctx, store, req)
+		result, err := elevation.PickHeight(ctx, store, req)
 		if err != nil {
 			log.Fatalf("Failed to get height: %v", err)
 		}

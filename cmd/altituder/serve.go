@@ -1,8 +1,8 @@
-package cmd
+package main
 
 import (
 	"fmt"
-	"github.com/pavletto/altituder/cmd/ddm"
+	"github.com/pavletto/altituder/internal/elevation"
 	"log"
 	"net/http"
 	"os"
@@ -54,7 +54,7 @@ Flags take precedence over environment variables.`,
 		}
 
 		// Create server
-		s := &ddm.Server{Store: store}
+		s := &elevation.Server{Store: store}
 
 		// Setup routes
 		mux := http.NewServeMux()

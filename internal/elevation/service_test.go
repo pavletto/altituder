@@ -1,16 +1,16 @@
-package ddm_test
+package elevation_test
 
 import (
 	"context"
 	"testing"
 	"time"
 
-	"github.com/pavletto/altituder/cmd/ddm"
+	"github.com/pavletto/altituder/internal/elevation"
 )
 
 func TestSearchIntersection(t *testing.T) {
 	// Create a test store with minimal configuration
-	cfg := ddm.StoreConfig{
+	cfg := elevation.StoreConfig{
 		CacheDir:      "/tmp/test-cache",
 		URLTemplate:   "", // No download for unit tests
 		PermitDownload: false,
@@ -19,19 +19,19 @@ func TestSearchIntersection(t *testing.T) {
 		HeightFactor:  1.0,
 	}
 
-	store, err := ddm.NewStore(cfg)
+	store, err := elevation.NewStore(cfg)
 	if err != nil {
 		t.Fatalf("Failed to create store: %v", err)
 	}
 
 	tests := []struct {
 		name    string
-		req     ddm.IntersectionRequest
+		req     elevation.IntersectionRequest
 		wantErr bool
 	}{
 		{
 			name: "valid request with defaults",
-			req: ddm.IntersectionRequest{
+			req: elevation.IntersectionRequest{
 				CamLon: 55.729469896669606,
 				CamLat: 25.00104389507723,
 				CamAlt: 177.72191600000002,
@@ -41,7 +41,7 @@ func TestSearchIntersection(t *testing.T) {
 		},
 		{
 			name: "valid request with custom parameters",
-			req: ddm.IntersectionRequest{
+			req: elevation.IntersectionRequest{
 				CamLon:  55.0,
 				CamLat:  25.0,
 				CamAlt:  100.0,
@@ -59,7 +59,7 @@ func TestSearchIntersection(t *testing.T) {
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()
 
-			result, err := ddm.SearchIntersection(ctx, store, tt.req)
+			result, err := elevation.SearchIntersection(ctx, store, tt.req)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("SearchIntersection() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -81,7 +81,7 @@ func TestSearchIntersection(t *testing.T) {
 }
 
 func TestSearchIntersection_NilStore(t *testing.T) {
-	req := ddm.IntersectionRequest{
+	req := elevation.IntersectionRequest{
 		CamLon: 55.0,
 		CamLat: 25.0,
 		CamAlt: 100.0,
@@ -89,7 +89,7 @@ func TestSearchIntersection_NilStore(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	_, err := ddm.SearchIntersection(ctx, nil, req)
+	_, err := elevation.SearchIntersection(ctx, nil, req)
 	if err == nil {
 		t.Error("SearchIntersection() with nil store should return error")
 	}
@@ -97,7 +97,7 @@ func TestSearchIntersection_NilStore(t *testing.T) {
 
 func TestPickHeight(t *testing.T) {
 	// Create a test store with minimal configuration
-	cfg := ddm.StoreConfig{
+	cfg := elevation.StoreConfig{
 		CacheDir:      "/tmp/test-cache",
 		URLTemplate:   "", // No download for unit tests
 		PermitDownload: false,
@@ -106,19 +106,19 @@ func TestPickHeight(t *testing.T) {
 		HeightFactor:  1.0,
 	}
 
-	store, err := ddm.NewStore(cfg)
+	store, err := elevation.NewStore(cfg)
 	if err != nil {
 		t.Fatalf("Failed to create store: %v", err)
 	}
 
 	tests := []struct {
 		name    string
-		req     ddm.HeightRequest
+		req     elevation.HeightRequest
 		wantErr bool
 	}{
 		{
 			name: "valid request",
-			req: ddm.HeightRequest{
+			req: elevation.HeightRequest{
 				Lat:  25.0,
 				Lon:  55.0,
 				Zoom: 14,
@@ -127,7 +127,7 @@ func TestPickHeight(t *testing.T) {
 		},
 		{
 			name: "valid request with default zoom",
-			req: ddm.HeightRequest{
+			req: elevation.HeightRequest{
 				Lat: 25.0,
 				Lon: 55.0,
 			},
@@ -140,7 +140,7 @@ func TestPickHeight(t *testing.T) {
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()
 
-			result, err := ddm.PickHeight(ctx, store, tt.req)
+			result, err := elevation.PickHeight(ctx, store, tt.req)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("PickHeight() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -160,21 +160,21 @@ func TestPickHeight(t *testing.T) {
 }
 
 func TestPickHeight_NilStore(t *testing.T) {
-	req := ddm.HeightRequest{
+	req := elevation.HeightRequest{
 		Lat:  25.0,
 		Lon:  55.0,
 		Zoom: 14,
 	}
 
 	ctx := context.Background()
-	_, err := ddm.PickHeight(ctx, nil, req)
+	_, err := elevation.PickHeight(ctx, nil, req)
 	if err == nil {
 		t.Error("PickHeight() with nil store should return error")
 	}
 }
 
 func TestIntersectionRequest_DefaultValues(t *testing.T) {
-	cfg := ddm.StoreConfig{
+	cfg := elevation.StoreConfig{
 		CacheDir:      "/tmp/test-cache",
 		URLTemplate:   "",
 		PermitDownload: false,
@@ -183,12 +183,12 @@ func TestIntersectionRequest_DefaultValues(t *testing.T) {
 		HeightFactor:  1.0,
 	}
 
-	store, err := ddm.NewStore(cfg)
+	store, err := elevation.NewStore(cfg)
 	if err != nil {
 		t.Fatalf("Failed to create store: %v", err)
 	}
 
-	req := ddm.IntersectionRequest{
+	req := elevation.IntersectionRequest{
 		CamLon: 55.0,
 		CamLat: 25.0,
 		CamAlt: 100.0,
@@ -199,7 +199,7 @@ func TestIntersectionRequest_DefaultValues(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	_, err = ddm.SearchIntersection(ctx, store, req)
+	_, err = elevation.SearchIntersection(ctx, store, req)
 	// Should not panic or error due to missing parameters
 	if err != nil && err.Error() == "store is nil" {
 		t.Error("SearchIntersection() should handle default parameters")
@@ -207,7 +207,7 @@ func TestIntersectionRequest_DefaultValues(t *testing.T) {
 }
 
 func TestHeightRequest_DefaultZoom(t *testing.T) {
-	cfg := ddm.StoreConfig{
+	cfg := elevation.StoreConfig{
 		CacheDir:      "/tmp/test-cache",
 		URLTemplate:   "",
 		PermitDownload: false,
@@ -216,12 +216,12 @@ func TestHeightRequest_DefaultZoom(t *testing.T) {
 		HeightFactor:  1.0,
 	}
 
-	store, err := ddm.NewStore(cfg)
+	store, err := elevation.NewStore(cfg)
 	if err != nil {
 		t.Fatalf("Failed to create store: %v", err)
 	}
 
-	req := ddm.HeightRequest{
+	req := elevation.HeightRequest{
 		Lat: 25.0,
 		Lon: 55.0,
 		// Zoom not set - should use default
@@ -230,7 +230,7 @@ func TestHeightRequest_DefaultZoom(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	_, err = ddm.PickHeight(ctx, store, req)
+	_, err = elevation.PickHeight(ctx, store, req)
 	// Should not panic or error due to missing zoom
 	if err != nil && err.Error() == "store is nil" {
 		t.Error("PickHeight() should handle default zoom")

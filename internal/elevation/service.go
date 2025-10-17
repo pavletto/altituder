@@ -1,11 +1,11 @@
-package ddm
+package elevation
 
 import (
 	"context"
 	"fmt"
 	"time"
 
-	"github.com/pavletto/altituder/cmd/terrain"
+	"github.com/pavletto/altituder/internal/raycast"
 )
 
 // IntersectionRequest contains parameters for raycast intersection search
@@ -69,7 +69,7 @@ func SearchIntersection(ctx context.Context, store *Store, req IntersectionReque
 	}
 
 	// Perform raycast
-	params := terrain.RaycastParams{
+	params := raycast.RaycastParams{
 		CamLon:  req.CamLon,
 		CamLat:  req.CamLat,
 		CamAlt:  req.CamAlt,
@@ -79,7 +79,7 @@ func SearchIntersection(ctx context.Context, store *Store, req IntersectionReque
 		DEM:     adapter,
 	}
 
-	lon, lat, ground, hit := terrain.Raycast(params)
+	lon, lat, ground, hit := raycast.Raycast(params)
 
 	return IntersectionResult{
 		Lon:    lon,

@@ -1,4 +1,4 @@
-package cmd
+package main
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pavletto/altituder/cmd/ddm"
+	"github.com/pavletto/altituder/internal/elevation"
 	"github.com/spf13/cobra"
 )
 
@@ -74,7 +74,7 @@ The quaternion represents camera orientation in w,x,y,z format (must be 4 values
 		maxDist, _ := cmd.Flags().GetFloat64("max-dist")
 
 		// Build request
-		req := ddm.IntersectionRequest{
+		req := elevation.IntersectionRequest{
 			CamLon:  camLon,
 			CamLat:  camLat,
 			CamAlt:  camAlt,
@@ -88,7 +88,7 @@ The quaternion represents camera orientation in w,x,y,z format (must be 4 values
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cancel()
 
-		result, err := ddm.SearchIntersection(ctx, store, req)
+		result, err := elevation.SearchIntersection(ctx, store, req)
 		if err != nil {
 			log.Fatalf("Failed to find intersection: %v", err)
 		}
