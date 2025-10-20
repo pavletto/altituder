@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/pavletto/altituder/internal/elevation"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/pavletto/altituder/elevation"
 
 	"github.com/spf13/cobra"
 )

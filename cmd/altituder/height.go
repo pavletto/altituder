@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/pavletto/altituder/internal/elevation"
+	"github.com/pavletto/altituder/elevation"
 	"github.com/spf13/cobra"
 )
 

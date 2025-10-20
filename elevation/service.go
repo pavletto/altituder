@@ -5,18 +5,18 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/pavletto/altituder/internal/raycast"
+	"github.com/pavletto/altituder/raycast"
 )
 
 // IntersectionRequest contains parameters for raycast intersection search
 type IntersectionRequest struct {
-	CamLon  float64   // Camera longitude
-	CamLat  float64   // Camera latitude
-	CamAlt  float64   // Camera altitude (GPS/WGS84)
+	CamLon  float64    // Camera longitude
+	CamLat  float64    // Camera latitude
+	CamAlt  float64    // Camera altitude (GPS/WGS84)
 	Quat    [4]float64 // Quaternion [w, x, y, z]
-	Zoom    int       // Tile zoom level
-	Step    float64   // Step size for raycast
-	MaxDist float64   // Maximum distance to search
+	Zoom    int        // Tile zoom level
+	Step    float64    // Step size for raycast
+	MaxDist float64    // Maximum distance to search
 }
 
 // IntersectionResult contains the result of intersection search

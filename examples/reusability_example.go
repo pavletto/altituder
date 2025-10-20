@@ -10,13 +10,13 @@ import (
 	"log"
 	"time"
 
-	"github.com/pavletto/altituder/internal/elevation"
+	elevation2 "github.com/pavletto/altituder/elevation"
 )
 
 // ExampleHeightLookup demonstrates using PickHeight in a non-HTTP context
 func ExampleHeightLookup() {
 	// Setup store configuration
-	cfg := elevation.StoreConfig{
+	cfg := elevation2.StoreConfig{
 		CacheDir:       "./cache",
 		URLTemplate:    "https://{s}.geodata.microavia.com/srtm/{z}/{y}/{x}.ddm",
 		Subdomains:     []string{"a", "b", "c"},
@@ -26,13 +26,13 @@ func ExampleHeightLookup() {
 		HeightFactor:   1.0,
 	}
 
-	store, err := elevation.NewStore(cfg)
+	store, err := elevation2.NewStore(cfg)
 	if err != nil {
 		log.Fatalf("Failed to create store: %v", err)
 	}
 
 	// Create a height request
-	req := elevation.HeightRequest{
+	req := elevation2.HeightRequest{
 		Lat:  25.0,
 		Lon:  55.0,
 		Zoom: 14,
@@ -42,7 +42,7 @@ func ExampleHeightLookup() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	result, err := elevation.PickHeight(ctx, store, req)
+	result, err := elevation2.PickHeight(ctx, store, req)
 	if err != nil {
 		log.Printf("Height lookup failed: %v", err)
 		return
@@ -55,7 +55,7 @@ func ExampleHeightLookup() {
 
 // ExampleBatchHeightLookup demonstrates processing multiple locations
 func ExampleBatchHeightLookup() {
-	cfg := elevation.StoreConfig{
+	cfg := elevation2.StoreConfig{
 		CacheDir:       "./cache",
 		URLTemplate:    "https://{s}.geodata.microavia.com/srtm/{z}/{y}/{x}.ddm",
 		Subdomains:     []string{"a", "b", "c"},
@@ -65,7 +65,7 @@ func ExampleBatchHeightLookup() {
 		HeightFactor:   1.0,
 	}
 
-	store, err := elevation.NewStore(cfg)
+	store, err := elevation2.NewStore(cfg)
 	if err != nil {
 		log.Fatalf("Failed to create store: %v", err)
 	}
@@ -82,14 +82,14 @@ func ExampleBatchHeightLookup() {
 	}
 
 	for _, loc := range locations {
-		req := elevation.HeightRequest{
+		req := elevation2.HeightRequest{
 			Lat:  loc.lat,
 			Lon:  loc.lon,
 			Zoom: 14,
 		}
 
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		result, err := elevation.PickHeight(ctx, store, req)
+		result, err := elevation2.PickHeight(ctx, store, req)
 		cancel()
 
 		if err != nil {
@@ -103,7 +103,7 @@ func ExampleBatchHeightLookup() {
 
 // ExampleIntersectionSearch demonstrates using SearchIntersection in a non-HTTP context
 func ExampleIntersectionSearch() {
-	cfg := elevation.StoreConfig{
+	cfg := elevation2.StoreConfig{
 		CacheDir:       "./cache",
 		URLTemplate:    "https://{s}.geodata.microavia.com/srtm/{z}/{y}/{x}.ddm",
 		Subdomains:     []string{"a", "b", "c"},
@@ -113,13 +113,13 @@ func ExampleIntersectionSearch() {
 		HeightFactor:   1.0,
 	}
 
-	store, err := elevation.NewStore(cfg)
+	store, err := elevation2.NewStore(cfg)
 	if err != nil {
 		log.Fatalf("Failed to create store: %v", err)
 	}
 
 	// Simulate a drone camera looking at terrain
-	req := elevation.IntersectionRequest{
+	req := elevation2.IntersectionRequest{
 		CamLon:  55.729469896669606,
 		CamLat:  25.00104389507723,
 		CamAlt:  177.72191600000002,
@@ -132,7 +132,7 @@ func ExampleIntersectionSearch() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	result, err := elevation.SearchIntersection(ctx, store, req)
+	result, err := elevation2.SearchIntersection(ctx, store, req)
 	if err != nil {
 		log.Printf("Intersection search failed: %v", err)
 		return

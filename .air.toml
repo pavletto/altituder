@@ -3,8 +3,8 @@ tmp_dir = ".dev"
 
 [build]
   args_bin = []
-  bin = "./.dev/main serve"
-  cmd = "go build -o ./.dev/main ."
+  bin = "./altituder build"
+  cmd = "make build"
   delay = 1000
   exclude_dir = []
   exclude_file = []

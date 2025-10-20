@@ -8,6 +8,29 @@ import (
 	"time"
 )
 
+type IntersectionResponse struct {
+	Lat    float64 `json:"lat"`
+	Lon    float64 `json:"lon"`
+	Ground float64 `json:"ground"`
+	Hit    bool    `json:"hit"`
+}
+
+// TileMeta описывает метаданные тайла в ответе HandleHeight
+type TileMeta struct {
+	Z int `json:"z"`
+	X int `json:"x"`
+	Y int `json:"y"`
+}
+
+// HeightResponse описывает JSON-ответ HandleHeight
+type HeightResponse struct {
+	Lat        float64  `json:"lat"`
+	Lon        float64  `json:"lon"`
+	Height     float64  `json:"height"`
+	Tile       TileMeta `json:"tile"`
+	TileSource string   `json:"tile_source"`
+	GridSize   int      `json:"grid_size"`
+}
 type Server struct {
 	Store *Store
 }
@@ -15,7 +38,6 @@ type Server struct {
 func (s *Server) HandleIntersection(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 
-	// Parse camera position
 	camLat, err := strconv.ParseFloat(q.Get("cam_lat"), 64)
 	if err != nil {
 		http.Error(w, "invalid cam_lat", http.StatusBadRequest)
@@ -32,7 +54,6 @@ func (s *Server) HandleIntersection(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Parse quaternion (expecting 4 comma-separated values)
 	quatStr := q.Get("quat")
 	if quatStr == "" {
 		http.Error(w, "quat parameter required (4 comma-separated values)", http.StatusBadRequest)
@@ -46,7 +67,6 @@ func (s *Server) HandleIntersection(w http.ResponseWriter, r *http.Request) {
 	var quat [4]float64
 	copy(quat[:], quatParts)
 
-	// Parse optional parameters
 	zoom := s.Store.Config().DefaultZoom
 	if zq := q.Get("z"); zq != "" {
 		if zi, err := strconv.Atoi(zq); err == nil {
@@ -68,7 +88,6 @@ func (s *Server) HandleIntersection(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Build request
 	req := IntersectionRequest{
 		CamLon:  camLon,
 		CamLat:  camLat,
@@ -79,7 +98,6 @@ func (s *Server) HandleIntersection(w http.ResponseWriter, r *http.Request) {
 		MaxDist: maxDist,
 	}
 
-	// Call business logic
 	ctx, cancel := context.WithTimeout(r.Context(), 10*time.Second)
 	defer cancel()
 
@@ -89,19 +107,17 @@ func (s *Server) HandleIntersection(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Return response
-	resp := map[string]any{
-		"lat":    result.Lat,
-		"lon":    result.Lon,
-		"ground": result.Ground,
-		"hit":    result.Hit,
+	resp := IntersectionResponse{
+		Lat:    result.Lat,
+		Lon:    result.Lon,
+		Ground: result.Ground,
+		Hit:    result.Hit,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(resp)
 }
 
-// splitFloat64 splits a string by delimiter and parses as float64
 func splitFloat64(s, delim string) []float64 {
 	parts := splitString(s, delim)
 	result := make([]float64, 0, len(parts))
@@ -113,7 +129,6 @@ func splitFloat64(s, delim string) []float64 {
 	return result
 }
 
-// splitString splits a string by delimiter
 func splitString(s, delim string) []string {
 	var result []string
 	start := 0
@@ -149,14 +164,12 @@ func (s *Server) HandleHeight(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Build request
 	req := HeightRequest{
 		Lat:  lat,
 		Lon:  lon,
 		Zoom: z,
 	}
 
-	// Call business logic
 	ctx, cancel := context.WithTimeout(r.Context(), 10*time.Second)
 	defer cancel()
 
@@ -166,14 +179,13 @@ func (s *Server) HandleHeight(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Return response
-	resp := map[string]any{
-		"lat":         result.Lat,
-		"lon":         result.Lon,
-		"height":      result.Height,
-		"tile":        map[string]any{"z": result.Meta.Z, "x": result.Meta.X, "y": result.Meta.Y},
-		"tile_source": result.Meta.Source, // mem-cache | disk-cache | download
-		"grid_size":   result.Meta.GridSize,
+	resp := HeightResponse{
+		Lat:        result.Lat,
+		Lon:        result.Lon,
+		Height:     result.Height,
+		Tile:       TileMeta{Z: result.Meta.Z, X: result.Meta.X, Y: result.Meta.Y},
+		TileSource: result.Meta.Source,
+		GridSize:   result.Meta.GridSize,
 	}
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(resp)

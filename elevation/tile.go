@@ -16,7 +16,7 @@ type tileData struct {
 	Factor    float32
 }
 
-func parseDDM(raw []byte, z, x, y int, factor float32, noData []float32) (*tileData, error) {
+func parseDDM(raw []byte, z, x, y int, noData []float32) (*tileData, error) {
 	if len(raw)%4 != 0 {
 		return nil, fmt.Errorf("ddm: payload not multiple of float32: %d", len(raw))
 	}
@@ -27,19 +27,12 @@ func parseDDM(raw []byte, z, x, y int, factor float32, noData []float32) (*tileD
 	}
 
 	vals := make([]float32, n)
-	// JS делает new Float32Array(arrayBuffer), в браузерах это LE.
+
 	if err := binary.Read(bytes.NewReader(raw), binary.LittleEndian, vals); err != nil {
 		return nil, err
 	}
-	if factor != 1 {
-		for i := range vals {
-			vals[i] *= factor
-		}
-	}
+
 	ns := make(map[float32]struct{}, len(noData))
-	for _, v := range noData {
-		ns[v*factor] = struct{}{}
-	}
 	return &tileData{
 		Z:         z,
 		X:         x,
@@ -47,7 +40,6 @@ func parseDDM(raw []byte, z, x, y int, factor float32, noData []float32) (*tileD
 		GridSize:  gs,
 		Values:    vals,
 		NoDataSet: ns,
-		Factor:    factor,
 	}, nil
 }
 

@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pavletto/altituder/internal/elevation"
+	"github.com/pavletto/altituder/elevation"
 	"github.com/spf13/cobra"
 )
 
@@ -97,7 +97,7 @@ The quaternion represents camera orientation in w,x,y,z format (must be 4 values
 		fmt.Printf("Camera Position: %.6f, %.6f @ %.2fm\n", camLat, camLon, camAlt)
 		fmt.Printf("Quaternion: [%.4f, %.4f, %.4f, %.4f]\n", quat[0], quat[1], quat[2], quat[3])
 		fmt.Println()
-		
+
 		if result.Hit {
 			fmt.Println("✓ Terrain intersection found!")
 			fmt.Printf("  Location: %.6f, %.6f\n", result.Lat, result.Lon)
