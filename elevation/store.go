@@ -1,4 +1,4 @@
-package ddm
+package elevation
 
 import (
 	"context"
@@ -148,7 +148,7 @@ func (s *Store) loadFromDisk(z, x, y int) (*tileData, error) {
 	if err != nil {
 		return nil, err
 	}
-	return parseDDM(raw, z, x, y, s.cfg.HeightFactor, s.cfg.NoDataValues)
+	return parseDDM(raw, z, x, y, s.cfg.NoDataValues)
 }
 
 func (s *Store) downloadTile(ctx context.Context, z, x, y int) (*tileData, error) {
@@ -177,7 +177,7 @@ func (s *Store) downloadTile(ctx context.Context, z, x, y int) (*tileData, error
 	if err := os.WriteFile(path, raw, 0o644); err != nil {
 		return nil, err
 	}
-	return parseDDM(raw, z, x, y, s.cfg.HeightFactor, s.cfg.NoDataValues)
+	return parseDDM(raw, z, x, y, s.cfg.NoDataValues)
 }
 
 // простая LRU

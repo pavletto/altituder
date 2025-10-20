@@ -1,7 +1,14 @@
+// This file is kept for backward compatibility.
+// The actual CLI application is in cmd/altituder/
+// Build with: go build -o altituder ./cmd/altituder
 package main
 
-import "github.com/pavletto/altituder/cmd"
+import (
+	"fmt"
+	"os"
+)
 
 func main() {
-	cmd.Execute()
+	fmt.Fprintln(os.Stderr, "Please build from cmd/altituder: go build -o altituder ./cmd/altituder")
+	os.Exit(1)
 }

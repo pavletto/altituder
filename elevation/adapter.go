@@ -1,11 +1,10 @@
-package ddm
+package elevation
 
 import (
 	"context"
 	"time"
 )
 
-// Обёртка, приводящая ddm.Store к простому интерфейсу ElevationSource
 type DEMAdapter struct {
 	Store   *Store
 	Zoom    int

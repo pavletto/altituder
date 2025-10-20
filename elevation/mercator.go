@@ -1,8 +1,7 @@
-package ddm
+package elevation
 
 import "math"
 
-// ограничим как в og.mercator
 const (
 	maxLat = 85.05112878
 	minLat = -85.05112878
@@ -22,7 +21,6 @@ func tileXYZ(lat, lon float64, z int) (x, y int) {
 	return
 }
 
-// Дробные координаты в тайле (0..1), затем умножим на gridSize-1
 func tileFrac(lat, lon float64, z, x, y int) (fx, fy float64) {
 	n := math.Exp2(float64(z))
 	wx := (lon + 180.0) / 360.0 * n

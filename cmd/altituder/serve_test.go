@@ -1,7 +1,6 @@
-package cmd_test
+package main
 
 import (
-	"github.com/pavletto/altituder/cmd"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -24,7 +23,7 @@ func TestIndexHandler(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
-			cmd.IndexHandler(test.w, test.r)
+			IndexHandler(test.w, test.r)
 			if test.w.Code != test.expectedStatus {
 				t.Errorf("Failed to produce expected status code %d, got %d", test.expectedStatus, test.w.Code)
 			}
